@@ -1,0 +1,15 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - briefly-data:/data
+    environment:
+      DATABASE_URL: sqlite:////data/brieflyweb.db
+volumes:
+  briefly-data:

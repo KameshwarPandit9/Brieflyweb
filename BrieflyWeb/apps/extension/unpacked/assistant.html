@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>BrieflyWeb</title>
+  <link rel="stylesheet" href="popup.css">
+  <link rel="stylesheet" href="assistant.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <span class="logo" aria-hidden="true">✦</span>
+      <div class="brand-copy">
+        <div class="brand-line"><b>BrieflyWeb</b><span class="brand-tag">AI READER</span></div>
+        <small id="page-title">Open a webpage</small>
+        <a id="page-url" class="page-url" aria-label="Current source"></a>
+      </div>
+      <span class="local-indicator" title="Page text stays on this device until you ask a question or request a summary"><i></i> LOCAL</span>
+    </header>
+
+    <nav class="tool-nav" aria-label="Assistant tools" role="tablist">
+      <button class="tab active" id="tab-ask" role="tab" aria-selected="true" aria-controls="ask" tabindex="0" data-tab="ask"><span aria-hidden="true">✧</span> Ask</button>
+      <button class="tab" id="tab-summary" role="tab" aria-selected="false" aria-controls="summary" tabindex="-1" data-tab="summary"><span aria-hidden="true">▤</span> Summarize</button>
+      <button class="tab" id="tab-safety" role="tab" aria-selected="false" aria-controls="safety" tabindex="-1" data-tab="safety"><span aria-hidden="true">◇</span> Safety</button>
+      <button class="tab" id="tab-autofill" role="tab" aria-selected="false" aria-controls="autofill" tabindex="-1" data-tab="autofill"><span aria-hidden="true">↳</span> Autofill</button>
+      <button class="tab" id="tab-library" role="tab" aria-selected="false" aria-controls="library" tabindex="-1" data-tab="library"><span aria-hidden="true">▣</span> Saved</button>
+      <button class="tab" id="tab-links" role="tab" aria-selected="false" aria-controls="links" tabindex="-1" data-tab="links"><span aria-hidden="true">···</span> More</button>
+    </nav>
+
+    <section class="panel active ask-panel" id="ask" role="tabpanel" aria-labelledby="tab-ask">
+      <div class="ask-intro">
+        <div class="eyebrow"><span>✦</span> YOUR PAGE ASSISTANT</div>
+        <h1>Make this page<br>make sense.</h1>
+        <p class="help">Ask a question, explore a selected term, or jump into a quick action.</p>
+        <div class="section-label"><span>START HERE</span><span class="quick-rule"></span></div>
+        <div class="suggestions">
+          <button class="suggestion" data-question="Summarize this page"><span class="suggestion-icon">▤</span><span><b>Summarize page</b><small>Get the main ideas</small></span><span class="suggestion-arrow">↗</span></button>
+          <button class="suggestion" data-action="summarize-video"><span class="suggestion-icon">▷</span><span><b>Summarize video</b><small>Use available captions</small></span><span class="suggestion-arrow">↗</span></button>
+          <button class="suggestion" data-question="What are the key takeaways?"><span class="suggestion-icon">✧</span><span><b>Key takeaways</b><small>Find what matters</small></span><span class="suggestion-arrow">↗</span></button>
+          <button class="suggestion" data-question="Explain this in simple terms"><span class="suggestion-icon">Aa</span><span><b>Explain simply</b><small>Make it easier to follow</small></span><span class="suggestion-arrow">↗</span></button>
+          <button class="suggestion" data-action="capture-page"><span class="suggestion-icon">▧</span><span><b>Capture this view</b><small>Ask about charts and visuals</small></span><span class="suggestion-arrow">↗</span></button>
+        </div>
+      </div>
+      <section id="visual-capture-card" class="workspace-card visual-capture hidden" aria-label="Captured page view">
+        <div class="capture-head"><div><b>Captured view</b><small id="capture-source"></small></div><button id="clear-capture" class="capture-remove" type="button">Remove</button></div>
+        <img id="visual-capture-preview" alt="Preview of the captured webpage view">
+        <p>Captured locally. Ask a question to send it for AI analysis after review.</p>
+      </section>
+      <section class="workspace-card document-card" aria-labelledby="document-tools-title">
+        <div class="group-heading-row"><span class="group-icon">▤</span><div><h2 id="document-tools-title">PDF & study tools</h2><p>Open a document, then ask questions or prepare for an exam or interview.</p></div></div>
+        <div class="tool-group"><div class="tool-group-label">DOCUMENT</div><div id="study-file-actions" class="file-action-grid" aria-label="Open document"></div></div>
+        <div class="tool-group"><div class="tool-group-label">PREPARATION</div><div id="study-actions" class="study-grid" aria-label="Document preparation actions"></div></div>
+      </section>
+      <div id="messages" aria-live="polite" aria-relevant="additions text"></div>
+      <details class="workspace-card selection-card">
+        <summary><span class="group-icon">Aa</span><span><b>Text & page tools</b><small>Select text on the page, then choose an action</small></span></summary>
+        <button class="primary explain-button" id="explain-selection" title="Select a word or phrase, then explain it">✦ <span>Explain selected text</span></button>
+        <div class="tool-group"><div class="tool-group-label">TRANSFORM TEXT</div><div class="inline-actions"><button class="secondary" id="translate-selection">Translate</button><select id="translate-target" aria-label="Translation language"><option>Hindi</option><option>English</option><option>Spanish</option><option>French</option><option>German</option><option>Japanese</option></select><button class="secondary" id="simplify-selection">Simplify</button></div></div>
+        <div class="tool-group"><div class="tool-group-label">SAVE FOR LATER</div><div class="inline-actions save-actions"><button class="secondary" id="save-selection">Save selection</button><button class="secondary" id="save-page">Save page notes</button></div></div>
+      </details>
+      <p class="disclaimer">AI can make mistakes. Check important details against the source.</p>
+      <form id="ask-form" autocomplete="off">
+        <label class="sr-only" for="question">Ask a question about this page</label>
+        <input id="question" type="text" placeholder="Ask about this page…" autocomplete="off">
+        <button type="submit" aria-label="Send question"><span aria-hidden="true">↑</span></button>
+      </form>
+    </section>
+
+    <section class="panel tool-panel" id="summary" role="tabpanel" aria-labelledby="tab-summary" aria-hidden="true">
+      <div class="panel-heading"><span class="eyebrow">PAGE TOOLS</span><h2>Summarize content</h2><p>Choose a format and language that fits how you want to read.</p></div>
+      <div class="workspace-card summary-options">
+        <div class="tool-group"><div class="tool-group-label">OUTPUT</div><div class="settings-grid"><div><label for="mode">Summary format</label><select id="mode"><option value="short">Short overview</option><option value="detailed">Detailed summary</option><option value="bullets">Bullet points</option><option value="takeaways">Important takeaways</option><option value="simple">Simple explanation</option><option value="study">Study notes</option></select></div>
+        <div><label for="language">Output language</label><select id="language"><option>English</option><option>Hindi</option><option>Spanish</option><option>French</option><option>German</option><option>Japanese</option></select></div></div></div>
+        <div class="tool-group"><div class="tool-group-label">ACTIONS</div><button class="primary" id="summarize"><span>✦</span> Summarize page</button>
+        <button class="secondary" id="summarize-video"><span>▷</span> Summarize video and key moments</button>
+        <div id="summary-file-action"></div></div>
+      </div>
+      <div id="summary-out" class="output hidden"></div>
+      <p class="disclosure">Video summaries use captions available on the page. Timestamped key moments appear only when source captions include times.</p>
+    </section>
+
+    <section class="panel tool-panel" id="safety" role="tabpanel" aria-labelledby="tab-safety" aria-hidden="true">
+      <div class="panel-heading"><span class="eyebrow">SITE CHECK</span><h2>Review this website</h2><p>Check common URL warning signs before you continue.</p></div>
+      <section class="workspace-card">
+        <div class="group-heading-row"><span class="group-icon">◇</span><div><h2>URL risk review</h2><p>Local signals only · no reputation lookup</p></div></div>
+        <p class="card-note">This checks URL structure. A low-risk result does not guarantee a site is safe.</p>
+        <button id="check-site" class="primary"><span>◇</span> Check current site</button>
+        <div id="safety-out" class="output hidden"></div>
+      </section>
+    </section>
+
+    <section class="panel tool-panel" id="autofill" role="tabpanel" aria-labelledby="tab-autofill" aria-hidden="true">
+      <div class="panel-heading"><span class="eyebrow">PRIVATE PROFILE</span><h2>Fill repetitive forms</h2><p>Your profile is encrypted on this device. Review every suggested field before filling.</p></div>
+      <section class="workspace-card autofill-card">
+        <div class="group-heading-row"><span class="group-icon">↳</span><div><h2>Encrypted profile</h2><p>Only ordinary contact, education, and work fields are supported.</p></div></div>
+        <div id="vault-locked" class="vault-card"><label for="passphrase">Vault passphrase</label><input id="passphrase" type="password" autocomplete="current-password" placeholder="At least 12 characters"><button class="primary" id="unlock">Unlock or create profile</button></div>
+        <div id="vault-unlocked" class="hidden"><p class="unlock-status">● Vault unlocked for this session</p><div class="tool-group"><div class="tool-group-label">YOUR PROFILE</div><div id="profile-fields"></div><div class="settings-actions"><button class="secondary" id="save-profile">Save encrypted profile</button></div></div><div class="tool-group"><div class="tool-group-label">CURRENT FORM</div><button class="primary" id="detect-form">Preview matching fields</button><div id="field-preview"></div><div class="settings-actions form-fill-actions"><button class="primary hidden" id="fill-selected">Fill selected fields</button><button class="secondary hidden" id="undo-fill">Undo last fill</button></div></div></div>
+      </section>
+    </section>
+
+    <section class="panel tool-panel" id="library" role="tabpanel" aria-labelledby="tab-library" aria-hidden="true">
+      <div class="panel-heading"><span class="eyebrow">ON THIS DEVICE</span><h2>Your saved library</h2><p>Find a saved summary and return to its source.</p></div>
+      <section class="workspace-card library-card"><div class="library-head"><label for="library-search">Search saved items</label><input id="library-search" placeholder="Search titles or content"></div><div id="library-items"></div></section>
+    </section>
+
+    <section class="panel tool-panel" id="links" role="tabpanel" aria-labelledby="tab-links" aria-hidden="true">
+      <div class="panel-heading"><span class="eyebrow">PREFERENCES & CONNECTIONS</span><h2>Settings</h2><p>Manage AI access, privacy, saved information, and service health.</p></div>
+      <section class="workspace-card settings-section">
+        <div class="group-heading-row"><span class="group-icon">✧</span><div><h2>AI provider</h2><p>Connect directly for AI answers without running the local backend.</p></div></div>
+        <label for="ai-base">Provider API address</label><input id="ai-base" type="url" value="https://openrouter.ai/api/v1" autocomplete="url">
+        <label for="ai-model">Model</label><input id="ai-model" type="text" value="openai/gpt-4o-mini" autocomplete="off">
+        <div class="key-slots"><label for="ai-key-1">Primary API key</label><input id="ai-key-1" type="password" placeholder="Key 1 · tried first" autocomplete="new-password">
+          <label for="ai-key-2">Backup API key 1</label><input id="ai-key-2" type="password" placeholder="Key 2 · tried if key 1 fails" autocomplete="new-password">
+          <label for="ai-key-3">Backup API key 2</label><input id="ai-key-3" type="password" placeholder="Key 3 · tried if key 2 fails" autocomplete="new-password"></div>
+        <div class="settings-actions"><button id="save-ai-settings" class="primary">Save AI connection</button><button id="clear-ai-settings" class="secondary">Remove saved keys</button></div>
+        <p id="ai-status" class="disclosure" role="status" aria-live="polite">Keys are stored in this Chrome profile, never in the project ZIP. Requests try key 1, then key 2, then key 3.</p>
+      </section>
+      <section class="workspace-card settings-section">
+        <div class="group-heading-row"><span class="group-icon">⌘</span><div><h2>Local service</h2><p>Set the optional backend address for PDF extraction and dashboard storage.</p></div></div>
+        <label for="api-base">API address</label><input id="api-base" type="url" inputmode="url" placeholder="http://localhost:8000/api/v1" autocomplete="url">
+        <div class="settings-actions"><button id="save-api-base" class="secondary">Save local service</button></div>
+        <p id="api-status" class="disclosure" role="status" aria-live="polite">Default: this computer on port 8000.</p>
+      </section>
+      <section class="workspace-card settings-section">
+        <div class="group-heading-row"><span class="group-icon">◇</span><div><h2>Privacy and data</h2><p>Review what is sent and remove data saved in this browser.</p></div></div>
+        <label class="toggle-row"><input id="privacy-preview" type="checkbox" checked><span><b>Preview before sending</b><small>Show page text or screenshot before an AI request.</small></span></label>
+        <div class="settings-grid"><button id="clear-library" class="secondary">Delete saved summaries</button><button id="clear-vault" class="secondary">Delete autofill profile</button></div>
+      </section>
+      <section class="workspace-card settings-section">
+        <div class="group-heading-row"><span class="group-icon">◉</span><div><h2>Service health</h2><p>Check AI, backend, PDF/OCR, and feature availability.</p></div></div>
+        <div class="settings-actions"><button id="check-connections" class="secondary">Check connections</button></div>
+        <div id="connection-report" class="health-list" aria-live="polite"></div>
+      </section>
+      <section class="workspace-card settings-section">
+        <div class="group-heading-row"><span class="group-icon">↗</span><div><h2>Links and media</h2><p>Open a link in Chrome to analyze its page with BrieflyWeb.</p></div></div>
+        <p class="card-note">For safety, the service does not fetch arbitrary URLs. Open the link in a tab to summarize its content.</p>
+        <label for="link-url">Link or video URL</label><input id="link-url" type="url" placeholder="https://example.com/article">
+        <div class="tool-group"><div class="tool-group-label">LINK CHECK</div><button id="analyze-link" class="secondary">Check link support</button></div><div id="link-out" class="output hidden"></div>
+        <div class="detector-card"><div><b>AI video detection</b><small>Provider integration status</small></div><button id="check-media" class="secondary">Check status</button></div>
+      </section>
+    </section>
+
+    <dialog id="send-review" class="review-dialog" aria-labelledby="review-title">
+      <h2 id="review-title">Review before sending</h2>
+      <p id="review-purpose"></p><small id="review-meta"></small>
+      <pre id="review-content"></pre><img id="review-image" class="hidden" alt="Preview of the image that will be sent to the AI provider">
+      <div class="review-actions"><button id="cancel-send" class="secondary">Cancel</button><button id="approve-send" class="primary">Send to AI</button></div>
+    </dialog>
+    <p id="error" class="error hidden" role="status" aria-live="polite"></p>
+    <footer><a id="open-dashboard" href="http://localhost:8000/dashboard/" target="_blank" rel="noreferrer">Open dashboard <span aria-hidden="true">↗</span></a><span class="footer-status"><i></i> Local</span></footer>
+  </main>
+  <script src="popup.js"></script>
+</body>
+</html>
+

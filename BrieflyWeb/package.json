@@ -1,0 +1,12 @@
+{
+  "name": "brieflyweb",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": ["apps/extension", "apps/web"],
+  "scripts": {
+    "dev:extension": "npm run dev -w @brieflyweb/extension",
+    "build:extension": "npm run build -w @brieflyweb/extension",
+    "dev:web": "npm run dev -w @brieflyweb/web",
+    "build:web": "npm run build -w @brieflyweb/web"
+  }
+}

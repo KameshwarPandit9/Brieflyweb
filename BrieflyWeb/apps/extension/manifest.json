@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "BrieflyWeb — AI Web Assistant",
+  "version": "0.1.0",
+  "description": "Understand webpages, save useful notes, and review site risk with your chosen AI provider.",
+  "permissions": ["activeTab", "storage", "sidePanel", "contextMenus", "scripting"],
+  "host_permissions": ["http://localhost:8000/*"],
+  "action": {"default_title":"BrieflyWeb","default_popup":"popup.html"},
+  "background": {"service_worker":"background.js","type":"module"},
+  "side_panel": {"default_path":"sidepanel.html"},
+  "content_security_policy": {"extension_pages":"script-src 'self'; object-src 'self';"},
+  "host_permissions": []
+}

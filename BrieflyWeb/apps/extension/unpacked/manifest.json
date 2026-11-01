@@ -1,0 +1,45 @@
+{
+  "manifest_version": 3,
+  "minimum_chrome_version": "141",
+  "name": "BrieflyWeb — AI Web Assistant",
+  "version": "0.3.0",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlf8VtCrBWp/8pI9MQPNY5gD7RmgmvpV5iMLMLQHRMMQNgPog903Q+MnLrASDxtVSU/L1+l+fLb1vUbOLkA/z1iubZzAYv8QhiksoXDLsknNp0Ba7YlQJJgHpN4vxJ6gXQoGiWBPXjcMd+c56frAHGYFHEeVQRd4HdSqP4WwzTgnGtuljOf1jW1wRFS7K9JEpEU5OC6Ht0Ht3S7ZTHw+FqH7doxWI8tlxxVzEHjyt+AfAtVdf/4KjMr9bnM5dYeThTktIyjbCK7JhMZWO+QQSaxeSlTvN24EPzjk2gZyBsgFfKqu8frCd3W3KSIwu+K/7R66H3HGKsBDSVBSK7la9LQIDAQAB",
+  "description": "Summarize the current page, save useful notes, and review site risk.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "sidePanel",
+    "contextMenus"
+  ],
+  "host_permissions": [
+    "http://localhost:8000/*",
+    "http://*/*",
+    "https://*/*",
+    "http://localhost:8001/*"
+  ],
+  "action": {
+    "default_title": "Open BrieflyWeb assistant"
+  },
+  "side_panel": {
+    "default_path": "assistant.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self';"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "page-capture.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}
